@@ -28,9 +28,11 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(express.static(path.join(__dirname, '../frontend')));
 
 // ✅ Serve frontend homepage
+// Optional welcome message
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.send('Backend is running');
 });
+
 
 // ✅ Login Route - Save to MongoDB
 app.post('/login', async (req, res) => {
