@@ -1,22 +1,26 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const path = require('path');
 const User = require('./models/User');
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
+// ✅ CORS Setup - allows all (adjust for Netlify)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(bodyParser.json());
 
-// ✅ MongoDB Atlas connection
+// ✅ MongoDB Atlas Connection
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -24,17 +28,15 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log('✅ MongoDB Atlas connected'))
 .catch((err) => console.error('❌ MongoDB connection error:', err));
 
-// ✅ Serve static files from frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+// ❌ REMOVE this if frontend is hosted separately
+// app.use(express.static(path.join(__dirname, '../frontend')));
 
-// ✅ Serve frontend homepage
-// Optional welcome message
+// ✅ Test route
 app.get('/', (req, res) => {
-  res.send('Backend is running');
+  res.send('✅ Backend is running on Render');
 });
 
-
-// ✅ Login Route - Save to MongoDB
+// ✅ POST /login route
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
   console.log("📥 Received login:", username, password);
@@ -54,7 +56,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// ✅ Start server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
